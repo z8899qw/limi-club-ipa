@@ -19,12 +19,14 @@ fi
 
 echo "==> 2/4 编译（关闭签名）"
 rm -rf build out "$IPA_NAME"
+BUILD_DIR="$PWD/build"
 xcodebuild -project LimiClub.xcodeproj -target "$APP_TARGET" \
-  -sdk iphoneos -configuration Release -derivedDataPath build \
+  -sdk iphoneos -configuration Release \
+  CONFIGURATION_BUILD_DIR="$BUILD_DIR" \
   CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
   CODE_SIGN_ENTITLEMENTS="" build
 
-APP_PATH="$(find build/Build/Products/Release-iphoneos -maxdepth 1 -name '*.app' | head -n 1)"
+APP_PATH="$BUILD_DIR/$APP_TARGET.app"
 if [ ! -d "$APP_PATH" ]; then
   echo "编译产物里没有 .app，检查上面的报错" >&2
   exit 1
