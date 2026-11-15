@@ -1,0 +1,28 @@
+name: build-unsinged-ipa
+# 没有 Mac 也能出 .ipa：把整个 LimiClub 文件夹传到 GitHub 仓库，
+# 在 Actions 里点 Run workflow，跑完在 Artifacts 里下载 ipa。
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "LimiClub/**"
+
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 安装 xcodegen
+        run: brew install xcodegen
+
+      - name: 编译并打包
+        working-directory: LimiClub
+        run: bash build_ipa.sh
+
+      - name: 上传 ipa
+        uses: actions/upload-artifact@v4
+        with:
+          name: limi-club-ipa
+          path: LimiClub/*.ipa
+          if-no-files-found: error
